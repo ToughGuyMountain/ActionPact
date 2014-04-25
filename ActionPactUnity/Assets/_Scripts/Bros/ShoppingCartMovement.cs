@@ -18,8 +18,16 @@ public class ShoppingCartMovement : MonoBehaviour {
 	void LateUpdate() {
 		// movement of the cart depends on bro state 
 		var displacement = CalculateMovement();
-		transform.position += displacement;
+
 		FaceDirection (displacement);
+
+		var futureViewportSpacePosition = Camera.main.WorldToViewportPoint(transform.position + displacement);
+		if (futureViewportSpacePosition.x <= 0 || futureViewportSpacePosition.x >= 1 || 
+		    futureViewportSpacePosition.y >= 1 || futureViewportSpacePosition.y <= 0) {
+			displacement = Vector3.zero;
+		}
+
+		transform.position += displacement;
 	}
 
 	public void Fall() {
