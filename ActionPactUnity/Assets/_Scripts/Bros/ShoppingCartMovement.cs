@@ -22,6 +22,10 @@ public class ShoppingCartMovement : MonoBehaviour {
 		FaceDirection (displacement);
 	}
 
+	public void Fall() {
+		animator.Play ("Fall");
+	}
+
 	Vector3 CalculateMovement() {
 		int leftCount = 0;
 		int rightCount = 0;
