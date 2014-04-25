@@ -7,9 +7,12 @@ public class Bro : MonoBehaviour {
 	public KeyCode up;
 	public KeyCode down;
 
-	public StateMachineState idle;
+	public StateMachineState idleLateral;
+	public StateMachineState idleVertical;
 	public StateMachineState leaningLeft;
 	public StateMachineState leaningRight;
+	public StateMachineState leaningBack;
+	public StateMachineState leaningForward;
 	
 	void Update() { 
 		HandleInput();
@@ -25,7 +28,17 @@ public class Bro : MonoBehaviour {
 			leaningLeft.SwitchTo();
 		}
 		else {
-			idle.SwitchTo();
+			idleLateral.SwitchTo();
+		}
+
+		if (Input.GetKey (up)) {
+			leaningBack.SwitchTo();
+		}
+		else if (Input.GetKey (down)) {
+			leaningForward.SwitchTo();
+		}
+		else {
+			idleVertical.SwitchTo();
 		}
 	}
 }
