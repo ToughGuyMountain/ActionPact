@@ -38,9 +38,11 @@ public class ShoppingCartMovement : MonoBehaviour {
 			if (bro.leaningBack.Active) backCount++;
 		});
 
-		int rightMost = (rightCount - leftCount) / bros.Length;
-		int forwardMost = (forwardCount - backCount) / bros.Length; 
-		return ((-rightMost * Vector3.right) - (forwardMost * new Vector3(1,1,0))).normalized * lateralSpeed * Time.deltaTime;
+		float rightMost = ((float)rightCount - leftCount) / bros.Length;
+		float forwardMost = ((float)forwardCount - backCount) / bros.Length; 
+		return (-rightMost * Vector3.right * lateralSpeed * Time.deltaTime);
+
+		//return ((-rightMost * Vector3.right) - (forwardMost * new Vector3(1,1,0))).normalized * lateralSpeed * Time.deltaTime;
 	}
 
 	void FaceDirection(Vector3 displacement) {
