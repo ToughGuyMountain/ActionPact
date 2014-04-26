@@ -6,7 +6,8 @@ using System;
 public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 	public float lateralSpeed;
 	public float verticalSpeed;
-	public float speed = 1;	
+	public float startSpeed = 1;
+	public float Speed { get; set; }	
 	public float distanceTravelled;
 	public float mountainHeight; 
 	public float PercentComplete { 
@@ -19,6 +20,7 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 
 	
 	void Start() {
+		Speed = startSpeed;
 		bros = GetComponentsInChildren<Bro>();
 		animator = GetComponent<Animator>();
 	}
@@ -37,10 +39,6 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 		}
 
 		transform.position += displacement;
-	}
-
-	public void Powerup(MountainBrew mountainBrew) {
-		speed += 1;
 	}
 
 	public void Fall() {
