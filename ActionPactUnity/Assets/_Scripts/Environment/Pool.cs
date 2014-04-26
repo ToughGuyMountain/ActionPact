@@ -30,7 +30,7 @@ public abstract class Pool<T> : Singleton<Pool<T>> where T : PoolObject {
 		var value = UnityEngine.Random.value;
 		//Debug.Log (value);
 		obj.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(value, 0, Camera.main.nearClipPlane));
-		obj.transform.position = new Vector3 (obj.transform.position.x, obj.transform.position.y, 0);
+		obj.transform.localPosition = new Vector3 (obj.transform.position.x, obj.transform.position.y, 0);
 	}
 
 	public T Pop() {
