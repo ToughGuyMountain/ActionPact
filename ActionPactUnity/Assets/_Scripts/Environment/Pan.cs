@@ -6,6 +6,6 @@ public class Pan : MonoBehaviour {
 	public Vector3 direction;
 
 	void Update() {
-		transform.position += speed * direction * Time.deltaTime;
+		transform.position += speed * direction.normalized * Time.deltaTime;
 	}
 }

@@ -1,0 +1,60 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+public abstract class Pool<T> : Singleton<Pool<T>> where T : PoolObject {
+	private Stack<T> pool;
+	[SerializeField] private T prefab;
+	[SerializeField] private int size = 16; 
+	[SerializeField] private List<T> activeObjects;
+	public List<T> ActiveObjects { get { return activeObjects; } }
+
+	protected override void Awake() {
+		base.Awake();
+		pool = new Stack<T>(size);
+		activeObjects = new List<T>(size);
+		Populate();
+	}
+	
+	private void Populate() {
+		for (int i = 0; i < size; i++) {
+			var obj = Instantiate(prefab) as T;
+			obj.transform.parent = transform;
+			obj.gameObject.SetActive(false);
+			pool.Push(obj);
+		}
+	}
+
+	public virtual void Spawn() {
+		Pop();
+	}
+
+	public T Pop() {
+		if (pool.Count > 0) {
+
+			var obj = pool.Pop();
+			obj.gameObject.SetActive(true); 
+			activeObjects.Add(obj);
+			return obj;
+		}
+		else {
+			Debug.LogWarning("POOL LIMIT REACHED");
+			return null;
+		}
+	}
+	
+	public void Push(T obj) {
+		obj.gameObject.SetActive(false);
+		activeObjects.Remove(obj);
+		pool.Push(obj);
+	}
+	
+	public virtual void ReturnAllToPool() {
+		var activeCopy = ActiveObjects.GetRange(0, ActiveObjects.Count);
+		foreach (var obj in activeCopy) {
+			obj.ReturnToPool();
+		}
+	}
+
+
+}
