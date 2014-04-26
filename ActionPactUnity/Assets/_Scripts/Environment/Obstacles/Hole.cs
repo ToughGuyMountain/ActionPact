@@ -10,7 +10,6 @@ public class Hole : Obstacle {
 		var shoppingCartBros = other.GetComponent<ShoppingCartBros> ();
 		if (shoppingCartBros) {
 			shoppingCartBros.HitObstacle(this);
-			ReturnToPool();
 		}
 	}
 }

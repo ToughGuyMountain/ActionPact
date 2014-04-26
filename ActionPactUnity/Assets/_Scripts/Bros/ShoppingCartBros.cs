@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 
 public class ShoppingCartBros : Singleton<ShoppingCartBros> {
+	public Transform startLocation;
 	public float relativeLateralSpeed;
 	public float relativeUpMountainSpeed;
 	public float relativeDownMountainSpeed;
@@ -19,12 +20,25 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 	private Bro[] bros;
 	private Animator animator;
 
-
-	
 	void Start() {
-		Speed = startSpeed;
 		bros = GetComponentsInChildren<Bro>();
 		animator = GetComponent<Animator>();
+		Restart();
+	}
+
+	void OnEnable() {
+		Game.Instance.Restart += Restart;
+	}
+
+	void OnDisable() {
+		Game.Instance.Restart -= Restart;
+	}
+
+	void Restart() {
+		Speed = startSpeed;
+		transform.position = startLocation.position;
+		distanceTravelled = 0;
+		animator.Play ("Idle");
 	}
 
 	void LateUpdate() {
@@ -36,6 +50,8 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 		if (CanMakeMove (displacement)) {
 			transform.position += displacement;
 		}
+
+		distanceTravelled += Speed * Time.deltaTime;
 	}
 
 	public void Fall() {
@@ -43,12 +59,22 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 	}
 
 	public void HitObstacle(Hole hole) {
-		StartCoroutine(Obstacle (hole));
+		Speed += 2;
+		animator.Play ("Wipeout");
+		//StartCoroutine(Obstacle (hole));
+	}
+
+	public void Stopped() {
+		Speed = 0;
+	}
+
+	public void RestartLevel() {
+		Game.Instance.Restart.Call();
 	}
 
 	IEnumerator Obstacle(Hole hole) {
-		Debug.Log("hole");
-		yield break;
+		//Debug.Log("hole");
+		yield break;	
 	}
 
 	public void HitPowerup(MountainBrew brew) {
