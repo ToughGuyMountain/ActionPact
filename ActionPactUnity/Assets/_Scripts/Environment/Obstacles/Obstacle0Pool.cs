@@ -6,5 +6,5 @@ public class Obstacle0Pool : Pool<Obstacle0> {
 		var spawner = GetComponent<Spawner> ();
 		spawner.SpawnWeight = () => 1;
 		spawner.Spawn = Spawn;
-	}
+	}	
 }

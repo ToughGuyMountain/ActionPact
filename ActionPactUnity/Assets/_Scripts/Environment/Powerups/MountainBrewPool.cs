@@ -6,5 +6,5 @@ public class MountainBrewPool : Pool<MountainBrew> {
 		var spawner = GetComponent<Spawner> ();
 		spawner.SpawnWeight = () => 1;
 		spawner.Spawn = Spawn;
-	}
+	}	
 }

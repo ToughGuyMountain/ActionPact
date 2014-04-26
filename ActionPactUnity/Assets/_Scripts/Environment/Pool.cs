@@ -26,7 +26,11 @@ public abstract class Pool<T> : Singleton<Pool<T>> where T : PoolObject {
 	}
 
 	public virtual void Spawn() {
-		Pop();
+		var obj = Pop();
+		var value = UnityEngine.Random.value;
+		//Debug.Log (value);
+		obj.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(value, 0, Camera.main.nearClipPlane));
+		obj.transform.position = new Vector3 (obj.transform.position.x, obj.transform.position.y, 0);
 	}
 
 	public T Pop() {
