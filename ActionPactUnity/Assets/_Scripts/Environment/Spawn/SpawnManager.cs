@@ -7,7 +7,7 @@ public class SpawnManager : MonoBehaviour {
 	public float minSpawnTime;
 	public float maxSpawnTime;	
 	float lastSpawnTime;
-	public float nextSpawnTime;
+	float nextSpawnTime;
 	Spawner[] spawners;
 
 	void Start() {
