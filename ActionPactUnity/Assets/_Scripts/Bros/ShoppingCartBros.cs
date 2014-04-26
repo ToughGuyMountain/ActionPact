@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System;
 
 public class ShoppingCartBros : Singleton<ShoppingCartBros> {
-	public Transform startLocation;
 	public float relativeLateralSpeed;
 	public float relativeUpMountainSpeed;
 	public float relativeDownMountainSpeed;
@@ -36,7 +35,6 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 
 	void Restart() {
 		Speed = startSpeed;
-		transform.position = startLocation.position;
 		distanceTravelled = 0;
 		animator.Play ("Idle");
 	}
