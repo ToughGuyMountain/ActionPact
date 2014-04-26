@@ -42,6 +42,27 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 		animator.Play ("Fall");
 	}
 
+	public void HitObstacle(Hole hole) {
+		StartCoroutine(Obstacle (hole));
+	}
+
+	IEnumerator Obstacle(Hole hole) {
+		Debug.Log("hole");
+		yield break;
+	}
+
+	public void HitPowerup(MountainBrew brew) {
+		StartCoroutine(Powerup(brew));
+	}
+
+	IEnumerator Powerup(MountainBrew brew) {
+		Speed += brew.speedBoost;
+		float startTime = Time.realtimeSinceStartup;
+		while (Time.realtimeSinceStartup - startTime < brew.timeInEffect) yield return null;
+		Speed -= brew.speedBoost;
+		
+	}
+
 	bool CanMakeMove(Vector3 displacement) {
 		// do some mad hax to make the bros not go off the bottom of the screen at all
 		var futureViewportSpacePosition = Camera.main.WorldToViewportPoint(transform.position + displacement + 
