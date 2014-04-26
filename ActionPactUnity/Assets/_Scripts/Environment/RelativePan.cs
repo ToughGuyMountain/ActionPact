@@ -7,6 +7,6 @@ public class RelativePan : MonoBehaviour {
 	public Vector3 direction;
 	
 	void Update() {
-		transform.position += ratio * Game.Instance.speed * direction.normalized * Time.deltaTime;
+		transform.position += ratio * ShoppingCartBros.Instance.speed * direction.normalized * Time.deltaTime;
 	}
 }

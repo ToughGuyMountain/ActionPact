@@ -3,13 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class ShoppingCartMovement : MonoBehaviour {
+public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 	public float lateralSpeed;
 	public float verticalSpeed;
+	public float speed = 1;	
+	public float distanceTravelled;
+	public float mountainHeight; 
+	public float PercentComplete { 
+		get { return distanceTravelled / mountainHeight; }
+	}	
 
 	private Bro[] bros;
 	private Animator animator;
 
+
+	
 	void Start() {
 		bros = GetComponentsInChildren<Bro>();
 		animator = GetComponent<Animator>();
@@ -29,6 +37,10 @@ public class ShoppingCartMovement : MonoBehaviour {
 		}
 
 		transform.position += displacement;
+	}
+
+	public void Powerup(MountainBrew mountainBrew) {
+		speed += 1;
 	}
 
 	public void Fall() {
