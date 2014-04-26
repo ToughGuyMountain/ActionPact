@@ -21,9 +21,10 @@ public class ShoppingCartMovement : MonoBehaviour {
 
 		FaceDirection (displacement);
 
-		var futureViewportSpacePosition = Camera.main.WorldToViewportPoint(transform.position + displacement);
-		if (futureViewportSpacePosition.x <= 0 || futureViewportSpacePosition.x >= 1 || 
-		    futureViewportSpacePosition.y >= 1 || futureViewportSpacePosition.y <= 0) {
+		var futureViewportSpacePosition = Camera.main.WorldToViewportPoint(transform.position + displacement + collider.bounds.extents);
+		if (futureViewportSpacePosition.x >= 1 || 
+		    futureViewportSpacePosition.y >= 1 || 
+		    futureViewportSpacePosition.y <= 0) {
 			displacement = Vector3.zero;
 		}
 
