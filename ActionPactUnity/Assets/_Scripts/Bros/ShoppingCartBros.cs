@@ -3,39 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class ShoppingCartBros : Singleton<ShoppingCartBros> {
+public class ShoppingCartBros : MonoBehaviour {
 	public float relativeLateralSpeed;
 	public float relativeUpMountainSpeed;
 	public float relativeDownMountainSpeed;
-	public float startSpeed = 1;
-	public float Speed { get; set; }	
-	public float distanceTravelled;
-	public float mountainHeight; 
-	public float PercentComplete { 
-		get { return distanceTravelled / mountainHeight; }
-	}	
+	public Animator rockyRoad;
+	public Animator cart;
 	public float rotationAngle = -30;
 
 	private Bro[] bros;
 	private Animator animator;
+	private RelativePan pan;
+
 
 	void Start() {
 		bros = GetComponentsInChildren<Bro>();
 		animator = GetComponent<Animator>();
+		pan = GetComponent<RelativePan> ();
 		Restart();
-	}
-
-	void OnEnable() {
 		Game.Instance.Restart += Restart;
 	}
 
-	void OnDisable() {
-		Game.Instance.Restart -= Restart;
-	}
-
 	void Restart() {
-		Speed = startSpeed;
-		distanceTravelled = 0;
 		animator.Play ("Idle");
 	}
 
@@ -48,8 +37,6 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 		if (CanMakeMove (displacement)) {
 			transform.position += displacement;
 		}
-
-		distanceTravelled += Speed * Time.deltaTime;
 	}
 
 	public void Fall() {
@@ -62,7 +49,10 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 	}
 
 	public void Stopped() {
-		Speed = 0;
+		// wiped out, so translate off the back of the screen
+		pan.enabled = true;
+		rockyRoad.enabled = false;
+		cart.enabled = false;
 	}
 
 	public void RestartLevel() {
@@ -75,9 +65,12 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 	}
 
 	public void HitPowerup(MountainBrew brew) {
-		StartCoroutine(Powerup(brew));
+		// collect em
+
+		//StartCoroutine(Powerup(brew));
 	}
 
+	/*
 	IEnumerator Powerup(MountainBrew brew) {
 		Speed += brew.speedBoost;
 		float startTime = Time.realtimeSinceStartup;
@@ -85,6 +78,7 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 		Speed -= brew.speedBoost;
 		
 	}
+	*/
 
 	bool CanMakeMove(Vector3 displacement) {
 		// do some mad hax to make the bros not go off the bottom of the screen at all
@@ -122,7 +116,7 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 
 		var rotation = Quaternion.Euler (new Vector3 (0, 0, rotationAngle));
 
-		return rotation * (Speed * Time.deltaTime * (Vector3.right * -rightMost * relativeLateralSpeed + Vector3.up * -forwardMost * (forwardMost > 0 ? relativeDownMountainSpeed : relativeUpMountainSpeed)));
+		return rotation * (MountainCam.Instance.speed * Time.deltaTime * (Vector3.right * -rightMost * relativeLateralSpeed + Vector3.up * -forwardMost * (forwardMost > 0 ? relativeDownMountainSpeed : relativeUpMountainSpeed)));
 	}
 
 	void FaceDirection(Vector3 displacement) {
