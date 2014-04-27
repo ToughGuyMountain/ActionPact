@@ -9,7 +9,12 @@ public class EnableOnState : MonoBehaviour {
 		state = GetComponent<StateMachineState>();
 		state.Enter += Enter;
 		state.Exit += Exit;
-		behaviour.enabled = false;
+		// give 'em a chance to start up
+		StartCoroutine(
+			Util.AfterOneFrame(
+			() => behaviour.enabled = false)
+		)
+		;
 	}
 	
 	void Enter() {

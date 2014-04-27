@@ -18,15 +18,24 @@ public class MountainGame : Singleton<MountainGame> {
 	void Start() {
 		end.Exit += OnRestart;
 
-		SceneManager.Instance.gameScene.Enter += () => {
-			camera.enabled = true;
-			play.SwitchTo();
-		};
+		Debug.Log ("yolo");
+		StartCoroutine(
+			Util.AfterOneFrame(() => {
+				SceneManager.Instance.gameScene.Enter += () => {
+					camera.enabled = true;
+					play.SwitchTo();
+				};
+			}
+		));
 
-		SceneManager.Instance.gameScene.Exit += () => {
-			camera.enabled = false;
-			end.SwitchTo();
-		};
+		StartCoroutine(
+			Util.AfterOneFrame(() => {
+			SceneManager.Instance.gameScene.Exit += () => {
+				camera.enabled = false;
+				end.SwitchTo();
+			};
+		}
+		));
 
 	}
 
@@ -35,10 +44,12 @@ public class MountainGame : Singleton<MountainGame> {
 	}
 
 	void Update() {
-		distanceTravelled += speed * Time.deltaTime;
-		if (AmountComplete >= 1 && play.Active) {
-			end.SwitchTo();
-			StartCoroutine(EndSequence());
+		if (play.Active) {
+				distanceTravelled += speed * Time.deltaTime;
+				if (AmountComplete >= 1 && play.Active) {
+						end.SwitchTo ();
+						StartCoroutine (EndSequence ());
+				}
 		}
 	}
 

@@ -50,26 +50,29 @@ public class ShoppingCartBros : MonoBehaviour {
 
 	void LateUpdate() {
 		// movement of the cart depends on bro state 
-		if (!stopped.Active) {
-			if (MountainGame.Instance.play.Active) {
-					if (Input.GetKeyDown(jumpKey)) {
-						Jump(); 
-					}
+		Debug.Log (MountainGame.Instance.play.Active);
+		if (MountainGame.Instance.play.Active) {
+			if (!stopped.Active) {
+				if (MountainGame.Instance.play.Active) {
+						if (Input.GetKeyDown(jumpKey)) {
+							Jump(); 
+						}
 
-					var displacement = CalculateMovement ();
+						var displacement = CalculateMovement ();
 
-					if (CanMakeMove (displacement)) {
-						transform.position += displacement;
-					}
+						if (CanMakeMove (displacement)) {
+							transform.position += displacement;
+						}
 
+				}
+				else {
+					transform.position -= new Vector3(1, 0.5f, 0) * MountainGame.Instance.speed * Time.deltaTime;
+				}
 			}
 			else {
-				transform.position -= new Vector3(1, 0.5f, 0) * MountainGame.Instance.speed * Time.deltaTime;
-			}
-		}
-		else {
-			if (MountainGame.Instance.play.Active && !dead.Active) {
-				transform.position +=  new Vector3(1, 0.5f, 0) * MountainGame.Instance.speed * Time.deltaTime;
+				if (MountainGame.Instance.play.Active && !dead.Active) {
+					transform.position +=  new Vector3(1, 0.5f, 0) * MountainGame.Instance.speed * Time.deltaTime;
+				}
 			}
 		}
 	}
