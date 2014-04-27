@@ -79,9 +79,7 @@ public abstract class Pool<T> : Singleton<Pool<T>> where T : PoolObject {
 	}
 
 	public virtual void ReturnAllToPool() {
-		Debug.Log ("all back to pool");
 		var activeCopy = ActiveObjects.GetRange(0, ActiveObjects.Count);
-		Debug.Log (activeCopy.Count);
 		foreach (var obj in activeCopy) {
 			obj.ReturnToPool();
 		}

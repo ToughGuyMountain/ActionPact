@@ -50,7 +50,6 @@ public class ShoppingCartBros : MonoBehaviour {
 
 	void LateUpdate() {
 		// movement of the cart depends on bro state 
-		Debug.Log (MountainGame.Instance.play.Active);
 		if (MountainGame.Instance.play.Active) {
 			if (!stopped.Active) {
 				if (MountainGame.Instance.play.Active) {

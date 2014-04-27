@@ -17,11 +17,13 @@ public class MountainGame : Singleton<MountainGame> {
 
 	void Start() {
 		end.Exit += OnRestart;
-
+		//MasterAudio.StopPlaylist();
 		Debug.Log ("yolo");
 		StartCoroutine(
 			Util.AfterOneFrame(() => {
 				SceneManager.Instance.gameScene.Enter += () => {
+				Debug.Log ("yes");
+					MasterAudio.PlaySound("song");
 					camera.enabled = true;
 					play.SwitchTo();
 				};
