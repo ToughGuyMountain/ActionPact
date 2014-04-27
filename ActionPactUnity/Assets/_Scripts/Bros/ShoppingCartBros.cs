@@ -20,17 +20,16 @@ public class ShoppingCartBros : MonoBehaviour {
 	private Vector3 startPosition;
 	private Bro[] bros;
 	private Animator animator;
-	private RelativePan pan;
+
 	
 	void Start() {
 		bros = GetComponentsInChildren<Bro>();
 		animator = GetComponent<Animator>();
-		pan = GetComponent<RelativePan> ();
 		startPosition = transform.position;
 
 		Restart();
 
-		StartCoroutine(RespawnAfterTime(0.0f));
+
 	}
 
 	void OnEnable(){ 
@@ -47,21 +46,34 @@ public class ShoppingCartBros : MonoBehaviour {
 
 	void LateUpdate() {
 		// movement of the cart depends on bro state 
-		var displacement = CalculateMovement();
+		if (!stopped.Active) {
+			if (MountainGame.Instance.play.Active) {
+				var displacement = CalculateMovement ();
 
-		if (CanMakeMove (displacement)) {
-			transform.position += displacement;
+				if (CanMakeMove (displacement)) {
+					transform.position += displacement;
+				}
+			}
+			else {
+				transform.position -= new Vector3(1, 0.5f, 0) * MountainGame.Instance.speed * Time.deltaTime;
+			}
+		}
+		else {
+			if (MountainGame.Instance.play.Active && !dead.Active) {
+				transform.position +=  new Vector3(1, 0.5f, 0) * MountainGame.Instance.speed * Time.deltaTime;
+			}
 		}
 	}
 
 	void Restart() {
 		brewCount = 0;
 		animator.Play("Idle");
+		Debug.Log ("restart");
+		StartCoroutine(RespawnAfterTime(0.0f));
 	}
 
 	public void ReachedEnd() {
-		pan.direction = -pan.direction;
-		pan.enabled = true;
+		
 	}
 
 	public void FellOffMountain() {
@@ -75,11 +87,11 @@ public class ShoppingCartBros : MonoBehaviour {
 	IEnumerator RespawnAfterTime(float time) {
 		dead.SwitchTo();
 		animator.Play("Idle");
-		pan.enabled = false;
 		rockyRoad.enabled = true;
 		cart.enabled = true;
-		transform.position = startPosition + new Vector3(1, .525f, 0) * 2.5f;
+		transform.position = startPosition + new Vector3(1, .5f, 0) * 2.5f;
 		yield return new WaitForSeconds (time);
+
 		float t = 0;
 		var startPos = transform.position;
 		while (t < 1) {
@@ -88,16 +100,12 @@ public class ShoppingCartBros : MonoBehaviour {
 			yield return null;
 		}
 
-		Respawn ();
-	}
-	
-	void Respawn() {
 		riding.SwitchTo();
 	}
 
 	public void Fall() {
 		falling.SwitchTo();
-		animator.Play ("Fall");
+		animator.Play("Fall");
 	}
 
 	public void HitObstacle(Hole hole) {
@@ -107,7 +115,6 @@ public class ShoppingCartBros : MonoBehaviour {
 
 	public void Stopped() {
 		// wiped out, so translate off the back of the screen
-		pan.enabled = true;
 		rockyRoad.enabled = false;
 		cart.enabled = false;
 		stopped.SwitchTo();
