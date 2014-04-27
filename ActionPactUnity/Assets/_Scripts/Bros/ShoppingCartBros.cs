@@ -146,6 +146,13 @@ public class ShoppingCartBros : MonoBehaviour {
 		}
 	}
 
+	public void HitObstacle(Ram ram) {
+		if (!jumping.Active) {
+			wiping.SwitchTo();
+			animator.Play ("Wipeout");
+		}
+	}
+
 	public void Stopped() {
 		// wiped out, so translate off the back of the screen
 		rockyRoad.enabled = false;
