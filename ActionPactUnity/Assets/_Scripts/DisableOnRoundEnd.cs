@@ -6,14 +6,14 @@ public class DisableOnRoundEnd : MonoBehaviour {
 
 	void OnEnable() {
 		StartCoroutine(Util.AfterOneFrame(() => {
-			MountainGame.Instance.ReachedEnd += OnReachedEnd;
-			MountainGame.Instance.Restart += OnRestart;
+			MountainGame.Instance.end.Enter += OnReachedEnd;
+			MountainGame.Instance.end.Exit += OnRestart;
 		}));
 	}
 	
 	void OnDisable(){
-		MountainGame.Instance.ReachedEnd -= OnReachedEnd;
-		MountainGame.Instance.Restart -= OnRestart;
+		MountainGame.Instance.end.Enter -= OnReachedEnd;
+		MountainGame.Instance.end.Exit -= OnRestart;
 	}
 	
 	void OnRestart() {

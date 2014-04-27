@@ -35,14 +35,14 @@ public class ShoppingCartBros : MonoBehaviour {
 
 	void OnEnable(){ 
 		StartCoroutine(Util.AfterOneFrame(()=> {
-			MountainGame.Instance.ReachedEnd += ReachedEnd;
-			MountainGame.Instance.Restart += Restart;
+			MountainGame.Instance.end.Enter += ReachedEnd;
+			MountainGame.Instance.end.Exit += Restart;
 		}));
 	}
 
 	void OnDisable() {
-		MountainGame.Instance.ReachedEnd -= ReachedEnd;
-		MountainGame.Instance.Restart -= Restart;
+		MountainGame.Instance.end.Enter -= ReachedEnd;
+		MountainGame.Instance.end.Exit -= Restart;
 	}
 
 	void LateUpdate() {
@@ -112,10 +112,6 @@ public class ShoppingCartBros : MonoBehaviour {
 		cart.enabled = false;
 		stopped.SwitchTo();
 
-	}
-
-	public void RestartLevel() {
-		MountainGame.Instance.Restart.Call();
 	}
 
 	IEnumerator Obstacle(Hole hole) {

@@ -6,5 +6,5 @@ public class HolePool : Pool<Hole> {
 		var spawner = GetComponent<Spawner> ();
 		spawner.SpawnWeight = () => 1;
 		spawner.Spawn = Spawn;
-	}
+	}	
 }

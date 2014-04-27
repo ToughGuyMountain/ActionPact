@@ -9,20 +9,16 @@ public class MountainGame : Singleton<MountainGame> {
 	public float AmountComplete { 
 		get { return distanceTravelled / mountainHeight; }
 	}	
-	
-	public Action Restart;
-	public Action ReachedEnd;
 
 	public StateMachineState play;
 	public StateMachineState end;
 
 	void Start() {
-		OnRestart();
-		Restart += OnRestart;
+		end.Exit += OnRestart;
+		StartCoroutine (Util.AfterOneFrame (() => play.SwitchTo ()));
 	}
 
 	void OnRestart() {
-		play.SwitchTo ();
 		distanceTravelled = 0;
 	}
 
@@ -30,7 +26,12 @@ public class MountainGame : Singleton<MountainGame> {
 		distanceTravelled += speed * Time.deltaTime;
 		if (AmountComplete >= 1 && play.Active) {
 			end.SwitchTo();
-			ReachedEnd.Call (); // redundant, i know (could have used event for comign into end state)
+			StartCoroutine(EndSequence());
 		}
+	}
+
+	IEnumerator EndSequence() {
+		yield return new WaitForSeconds(5.0f);
+		play.SwitchTo ();
 	}
 }

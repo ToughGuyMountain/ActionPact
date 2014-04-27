@@ -11,7 +11,7 @@ public class RestoreStartPositionOnRestart : MonoBehaviour {
 
 	void OnEnable() {
 		StartCoroutine(Util.AfterOneFrame(() => {
-			MountainGame.Instance.Restart += OnRestart;
+			MountainGame.Instance.end.Exit += OnRestart;
 		}));
 	}
 
@@ -20,6 +20,6 @@ public class RestoreStartPositionOnRestart : MonoBehaviour {
 	}
 
 	void OnDisable(){
-		MountainGame.Instance.Restart -= OnRestart;
+		MountainGame.Instance.end.Exit -= OnRestart;
 	}
 }
