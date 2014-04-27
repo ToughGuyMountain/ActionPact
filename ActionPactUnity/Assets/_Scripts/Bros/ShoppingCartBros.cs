@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 
 public class ShoppingCartBros : MonoBehaviour {
+	public KeyCode jumpKey;
 	public float relativeLateralSpeed;
 	public float relativeUpMountainSpeed;
 	public float relativeDownMountainSpeed;
@@ -16,6 +17,8 @@ public class ShoppingCartBros : MonoBehaviour {
 	public StateMachineState riding;
 	public StateMachineState falling;
 	public StateMachineState dead;
+	public StateMachineState jumping;
+	public StateMachineState wiping;
 
 	private Vector3 startPosition;
 	private Bro[] bros;
@@ -48,11 +51,16 @@ public class ShoppingCartBros : MonoBehaviour {
 		// movement of the cart depends on bro state 
 		if (!stopped.Active) {
 			if (MountainGame.Instance.play.Active) {
-				var displacement = CalculateMovement ();
+					if (Input.GetKeyDown(jumpKey)) {
+						Jump(); 
+					}
 
-				if (CanMakeMove (displacement)) {
-					transform.position += displacement;
-				}
+					var displacement = CalculateMovement ();
+
+					if (CanMakeMove (displacement)) {
+						transform.position += displacement;
+					}
+
 			}
 			else {
 				transform.position -= new Vector3(1, 0.5f, 0) * MountainGame.Instance.speed * Time.deltaTime;
@@ -65,10 +73,31 @@ public class ShoppingCartBros : MonoBehaviour {
 		}
 	}
 
+	void Jump() {
+		if (!jumping.Active && riding.Active) {
+			jumping.SwitchTo();
+			StartCoroutine(Jumping());
+		}
+	}
+
+	IEnumerator Jumping() {
+		float t = 0;
+		var startPos = transform.position;
+		while (t < 0.5f) {
+			Debug.Log ( Mathf.Sin (t/2.0f));
+			var theta = t / 0.5f * Mathf.PI;
+			//transform.position = new Vector3(startPos.x, startPos.y + Mathf.Sin (theta) * 0.15f * MountainGame.Instance.speed * Time.deltaTime, startPos.z);
+			transform.position += Mathf.Cos (theta) * .7f * MountainGame.Instance.speed * Time.deltaTime * Vector3.up;
+			t += Time.deltaTime;
+			yield return null;
+		}
+
+		riding.SwitchTo();
+	}
+
 	void Restart() {
 		brewCount = 0;
 		animator.Play("Idle");
-		Debug.Log ("restart");
 		StartCoroutine(RespawnAfterTime(0.0f));
 	}
 
@@ -104,13 +133,17 @@ public class ShoppingCartBros : MonoBehaviour {
 	}
 
 	public void Fall() {
-		falling.SwitchTo();
-		animator.Play("Fall");
+		if (!jumping.Active) {
+			falling.SwitchTo();
+			animator.Play("Fall");
+		}
 	}
 
 	public void HitObstacle(Hole hole) {
-		animator.Play ("Wipeout");
-		//StartCoroutine(Obstacle (hole));
+		if (!jumping.Active) {
+			wiping.SwitchTo();
+			animator.Play ("Wipeout");
+		}
 	}
 
 	public void Stopped() {
@@ -121,10 +154,6 @@ public class ShoppingCartBros : MonoBehaviour {
 
 	}
 
-	IEnumerator Obstacle(Hole hole) {
-		yield break;	
-	}
-
 	public void HitPowerup(MountainBrew brew) {
 		// collect em
 		brewCount++;
@@ -132,7 +161,7 @@ public class ShoppingCartBros : MonoBehaviour {
 
 	bool CanMakeMove(Vector3 displacement) {
 		// do some mad hax to make the bros not go off the bottom of the screen at all
-		if (!riding.Active) return false;
+		if (!riding.Active && !jumping.Active) return false;
 	
 		var collider = GetComponentInChildren<Collider> ();
 		var futureViewportSpacePosition = Camera.main.WorldToViewportPoint(transform.position + displacement + 
