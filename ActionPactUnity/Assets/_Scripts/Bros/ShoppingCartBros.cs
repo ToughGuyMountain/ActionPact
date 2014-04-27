@@ -19,6 +19,7 @@ public class ShoppingCartBros : MonoBehaviour {
 	public StateMachineState dead;
 	public StateMachineState jumping;
 	public StateMachineState wiping;
+	public StateMachineState recovering;
 
 	private Vector3 startPosition;
 	private Bro[] bros;
@@ -117,21 +118,25 @@ public class ShoppingCartBros : MonoBehaviour {
 		dead.SwitchTo();
 		animator.Play("Idle");
 		rockyRoad.enabled = true;
-		//cart.enabled = true;
+		cart.enabled = true;
 		transform.position = startPosition + new Vector3(1, .5f, 0) * 2.5f;
 		yield return new WaitForSeconds (time);
 
 		float t = 0;
+
 		var startPos = transform.position;
+		recovering.SwitchTo();
+
 		while (t < 1) {
 			transform.position = Vector3.Lerp(startPos, startPosition, t);
 			t += Time.deltaTime;
 			yield return null;
 		}
 
+		yield return new WaitForSeconds(0.5f);
 		riding.SwitchTo();
 	}
-
+	
 	public void Fall() {
 		if (!jumping.Active) {
 			falling.SwitchTo();
@@ -140,14 +145,14 @@ public class ShoppingCartBros : MonoBehaviour {
 	}
 
 	public void HitObstacle(Hole hole) {
-		if (!jumping.Active) {
+		if (!jumping.Active && !recovering.Active) {
 			wiping.SwitchTo();
 			animator.Play ("Wipeout");
 		}
 	}
 
 	public void HitObstacle(Ram ram) {
-		if (!jumping.Active) {
+		if (!jumping.Active && !recovering.Active) {
 			wiping.SwitchTo();
 			animator.Play ("Wipeout");
 		}
@@ -168,7 +173,7 @@ public class ShoppingCartBros : MonoBehaviour {
 
 	bool CanMakeMove(Vector3 displacement) {
 		// do some mad hax to make the bros not go off the bottom of the screen at all
-		if (!riding.Active && !jumping.Active) return false;
+		if ((!riding.Active && !jumping.Active && !recovering.Active)) return false;
 	
 		var collider = GetComponentInChildren<Collider> ();
 		var futureViewportSpacePosition = Camera.main.WorldToViewportPoint(transform.position + displacement + 
