@@ -57,7 +57,6 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 	}
 
 	public void HitObstacle(Hole hole) {
-		Speed += 2;
 		animator.Play ("Wipeout");
 		//StartCoroutine(Obstacle (hole));
 	}
@@ -89,6 +88,7 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 
 	bool CanMakeMove(Vector3 displacement) {
 		// do some mad hax to make the bros not go off the bottom of the screen at all
+		var collider = GetComponentInChildren<Collider> ();
 		var futureViewportSpacePosition = Camera.main.WorldToViewportPoint(transform.position + displacement + 
 			((Camera.main.WorldToViewportPoint(transform.position).y < 0.5f) ? 
 		 	new Vector3(collider.bounds.extents.x, -collider.bounds.extents.y, collider.bounds.extents.z) 

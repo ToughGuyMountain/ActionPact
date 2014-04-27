@@ -7,7 +7,7 @@ public class Hole : Obstacle {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		var shoppingCartBros = other.GetComponent<ShoppingCartBros> ();
+		var shoppingCartBros = other.transform.parent.GetComponent<ShoppingCartBros> ();
 		if (shoppingCartBros) {
 			shoppingCartBros.HitObstacle(this);
 		}

@@ -13,7 +13,7 @@ public class MountainBrew : Powerup {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		var shoppingCartBros = other.GetComponent<ShoppingCartBros> ();
+		var shoppingCartBros = other.transform.parent.GetComponent<ShoppingCartBros> ();
 		if (shoppingCartBros) {
 			// hax: run the coroutine on the bros, cause they dont get disabled lol 
 			shoppingCartBros.HitPowerup(this);
