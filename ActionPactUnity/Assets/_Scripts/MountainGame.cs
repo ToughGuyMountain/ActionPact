@@ -45,11 +45,11 @@ public class MountainGame : Singleton<MountainGame> {
 
 	void Update() {
 		if (play.Active) {
-				distanceTravelled += speed * Time.deltaTime;
-				if (AmountComplete >= 1 && play.Active) {
-						end.SwitchTo ();
-						StartCoroutine (EndSequence ());
-				}
+			distanceTravelled += speed * Time.deltaTime;
+			if (AmountComplete >= 1 && play.Active) {
+					end.SwitchTo ();
+					StartCoroutine (EndSequence ());
+			}
 		}
 	}
 

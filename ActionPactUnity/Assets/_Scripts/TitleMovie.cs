@@ -7,7 +7,4 @@ public class TitleMovie : MonoBehaviour {
 		(renderer.material.mainTexture as MovieTexture).Play();
 	}
 
-	public void MovieFinished() {
-		SceneManager.Instance.comicScene.SwitchTo ();
-	}
 }

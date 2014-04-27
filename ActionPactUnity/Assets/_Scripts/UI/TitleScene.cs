@@ -7,4 +7,16 @@ public class TitleScene : Singleton<TitleScene> {
 			SceneManager.Instance.comicScene.SwitchTo ();
 		}
 	}
+
+	public void FistBump() {
+		MasterAudio.PlaySound ("chyea");
+	}
+
+	public void ACTIONPACT() {
+		MasterAudio.PlaySound ("ACTIONPACT");
+	}
+
+	public void MovieFinished() {
+		SceneManager.Instance.comicScene.SwitchTo ();
+	}
 }

@@ -2,14 +2,11 @@
 using System.Collections;
 
 public class ComicCamera : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-	
+	public void Panel1() {
+		MasterAudio.PlaySound ("comix");
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	public void ComicComplete() {
+		SceneManager.Instance.gameScene.SwitchTo();
 	}
 }

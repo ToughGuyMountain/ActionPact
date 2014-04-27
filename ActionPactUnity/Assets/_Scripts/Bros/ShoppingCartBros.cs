@@ -78,6 +78,7 @@ public class ShoppingCartBros : MonoBehaviour {
 	}
 
 	void Jump() {
+		MasterAudio.PlaySound("jump");
 		if (!jumping.Active && riding.Active) {
 			jumping.SwitchTo();
 			StartCoroutine(Jumping());
