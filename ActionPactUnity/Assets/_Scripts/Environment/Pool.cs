@@ -15,7 +15,30 @@ public abstract class Pool<T> : Singleton<Pool<T>> where T : PoolObject {
 		activeObjects = new List<T>(size);
 		Populate();
 	}
+
+	void OnEnable() {
+		// give the Game instance a chance to exist on the first run
+		StartCoroutine (_SubscribeAfterWait ());
+	}
+
+	void OnDisable() {
+		Game.Instance.Restart -= ReturnAfterWait;
+	}
+
+	IEnumerator _SubscribeAfterWait() {
+		yield return new WaitForEndOfFrame();
+		Game.Instance.Restart += ReturnAfterWait;
+	}
 	
+	public void ReturnAfterWait() {
+		StartCoroutine (_ReturnAfterWait ());
+	}
+	
+	IEnumerator _ReturnAfterWait() {
+		yield return new WaitForEndOfFrame();
+		ReturnAllToPool ();
+	}
+
 	private void Populate() {
 		for (int i = 0; i < size; i++) {
 			var obj = Instantiate(prefab) as T;
@@ -29,7 +52,7 @@ public abstract class Pool<T> : Singleton<Pool<T>> where T : PoolObject {
 		var obj = Pop();
 		var value = UnityEngine.Random.value;
 		//Debug.Log (value);
-		obj.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(value, 0, Camera.main.nearClipPlane));
+		obj.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(value, -0.1f, Camera.main.nearClipPlane));
 		obj.transform.localPosition = new Vector3 (obj.transform.position.x, obj.transform.position.y, 0);
 	}
 
@@ -48,17 +71,19 @@ public abstract class Pool<T> : Singleton<Pool<T>> where T : PoolObject {
 	}
 	
 	public void Push(T obj) {
-		obj.gameObject.SetActive(false);
-		activeObjects.Remove(obj);
-		pool.Push(obj);
+		if (ActiveObjects.Contains(obj)) {
+			obj.gameObject.SetActive(false);
+			activeObjects.Remove(obj);
+			pool.Push(obj);
+		}
 	}
-	
+
 	public virtual void ReturnAllToPool() {
+		Debug.Log ("all back to pool");
 		var activeCopy = ActiveObjects.GetRange(0, ActiveObjects.Count);
+		Debug.Log (activeCopy.Count);
 		foreach (var obj in activeCopy) {
 			obj.ReturnToPool();
 		}
 	}
-
-
 }

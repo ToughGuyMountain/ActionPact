@@ -16,17 +16,9 @@ public class MountainBrew : Powerup {
 		var shoppingCartBros = other.GetComponent<ShoppingCartBros> ();
 		if (shoppingCartBros) {
 			// hax: run the coroutine on the bros, cause they dont get disabled lol 
-			shoppingCartBros.StartCoroutine(Powerup(shoppingCartBros));
+			shoppingCartBros.HitPowerup(this);
 			ReturnToPool();
-
 		}
 	}
 
-	IEnumerator Powerup(ShoppingCartBros bros) {
-		bros.Speed += speedBoost;
-		float startTime = Time.realtimeSinceStartup;
-		while (Time.realtimeSinceStartup - startTime < timeInEffect) yield return null;
-		bros.Speed -= speedBoost;
-
-	}
 }

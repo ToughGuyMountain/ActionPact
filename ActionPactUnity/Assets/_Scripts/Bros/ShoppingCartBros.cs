@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System;
 
 public class ShoppingCartBros : Singleton<ShoppingCartBros> {
-	public float lateralSpeed;
-	public float verticalSpeed;
+	public float relativeLateralSpeed;
+	public float relativeUpMountainSpeed;
+	public float relativeDownMountainSpeed;
 	public float startSpeed = 1;
 	public float Speed { get; set; }	
 	public float distanceTravelled;
@@ -13,16 +14,29 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 	public float PercentComplete { 
 		get { return distanceTravelled / mountainHeight; }
 	}	
+	public float rotationAngle = -30;
 
 	private Bro[] bros;
 	private Animator animator;
 
-
-	
 	void Start() {
-		Speed = startSpeed;
 		bros = GetComponentsInChildren<Bro>();
 		animator = GetComponent<Animator>();
+		Restart();
+	}
+
+	void OnEnable() {
+		Game.Instance.Restart += Restart;
+	}
+
+	void OnDisable() {
+		Game.Instance.Restart -= Restart;
+	}
+
+	void Restart() {
+		Speed = startSpeed;
+		distanceTravelled = 0;
+		animator.Play ("Idle");
 	}
 
 	void LateUpdate() {
@@ -31,18 +45,64 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 
 		FaceDirection (displacement);
 
-		var futureViewportSpacePosition = Camera.main.WorldToViewportPoint(transform.position + displacement + collider.bounds.extents);
-		if (futureViewportSpacePosition.x >= 1 || 
-		    futureViewportSpacePosition.y >= 1 || 
-		    futureViewportSpacePosition.y <= 0) {
-			displacement = Vector3.zero;
+		if (CanMakeMove (displacement)) {
+			transform.position += displacement;
 		}
 
-		transform.position += displacement;
+		distanceTravelled += Speed * Time.deltaTime;
 	}
 
 	public void Fall() {
 		animator.Play ("Fall");
+	}
+
+	public void HitObstacle(Hole hole) {
+		Speed += 2;
+		animator.Play ("Wipeout");
+		//StartCoroutine(Obstacle (hole));
+	}
+
+	public void Stopped() {
+		Speed = 0;
+	}
+
+	public void RestartLevel() {
+		Game.Instance.Restart.Call();
+	}
+
+	IEnumerator Obstacle(Hole hole) {
+		//Debug.Log("hole");
+		yield break;	
+	}
+
+	public void HitPowerup(MountainBrew brew) {
+		StartCoroutine(Powerup(brew));
+	}
+
+	IEnumerator Powerup(MountainBrew brew) {
+		Speed += brew.speedBoost;
+		float startTime = Time.realtimeSinceStartup;
+		while (Time.realtimeSinceStartup - startTime < brew.timeInEffect) yield return null;
+		Speed -= brew.speedBoost;
+		
+	}
+
+	bool CanMakeMove(Vector3 displacement) {
+		// do some mad hax to make the bros not go off the bottom of the screen at all
+		var futureViewportSpacePosition = Camera.main.WorldToViewportPoint(transform.position + displacement + 
+			((Camera.main.WorldToViewportPoint(transform.position).y < 0.5f) ? 
+		 	new Vector3(collider.bounds.extents.x, -collider.bounds.extents.y, collider.bounds.extents.z) 
+		 	: collider.bounds.extents)
+		);
+
+		if (futureViewportSpacePosition.x >= 1 || 
+		    futureViewportSpacePosition.y >= 1 || 
+		    futureViewportSpacePosition.y <= 0) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 	Vector3 CalculateMovement() {
@@ -59,9 +119,10 @@ public class ShoppingCartBros : Singleton<ShoppingCartBros> {
 
 		float rightMost = ((float)rightCount - leftCount) / bros.Length;
 		float forwardMost = ((float)forwardCount - backCount) / bros.Length; 
-		return (-rightMost * Vector3.right * lateralSpeed * Time.deltaTime);
 
-		//return ((-rightMost * Vector3.right) - (forwardMost * new Vector3(1,1,0))).normalized * lateralSpeed * Time.deltaTime;
+		var rotation = Quaternion.Euler (new Vector3 (0, 0, rotationAngle));
+
+		return rotation * (Speed * Time.deltaTime * (Vector3.right * -rightMost * relativeLateralSpeed + Vector3.up * -forwardMost * (forwardMost > 0 ? relativeDownMountainSpeed : relativeUpMountainSpeed)));
 	}
 
 	void FaceDirection(Vector3 displacement) {
