@@ -27,9 +27,22 @@ public class ShoppingCartBros : MonoBehaviour {
 		animator = GetComponent<Animator>();
 		pan = GetComponent<RelativePan> ();
 		startPosition = transform.position;
+
 		Restart();
-		Game.Instance.Restart += Restart;
+
 		StartCoroutine(RespawnAfterTime(0.0f));
+	}
+
+	void OnEnable(){ 
+		StartCoroutine(Util.AfterOneFrame(()=> {
+			MountainGame.Instance.ReachedEnd += ReachedEnd;
+			MountainGame.Instance.Restart += Restart;
+		}));
+	}
+
+	void OnDisable() {
+		MountainGame.Instance.ReachedEnd -= ReachedEnd;
+		MountainGame.Instance.Restart -= Restart;
 	}
 
 	void LateUpdate() {
@@ -44,6 +57,11 @@ public class ShoppingCartBros : MonoBehaviour {
 	void Restart() {
 		brewCount = 0;
 		animator.Play("Idle");
+	}
+
+	public void ReachedEnd() {
+		pan.direction = -pan.direction;
+		pan.enabled = true;
 	}
 
 	public void FellOffMountain() {
@@ -97,7 +115,7 @@ public class ShoppingCartBros : MonoBehaviour {
 	}
 
 	public void RestartLevel() {
-		Game.Instance.Restart.Call();
+		MountainGame.Instance.Restart.Call();
 	}
 
 	IEnumerator Obstacle(Hole hole) {
@@ -147,6 +165,6 @@ public class ShoppingCartBros : MonoBehaviour {
 
 		var rotation = Quaternion.Euler (new Vector3 (0, 0, rotationAngle));
 
-		return rotation * (MountainCam.Instance.speed * Time.deltaTime * (Vector3.right * -rightMost * relativeLateralSpeed + Vector3.up * -forwardMost * (forwardMost > 0 ? relativeDownMountainSpeed : relativeUpMountainSpeed)));
+		return rotation * (MountainGame.Instance.speed * Time.deltaTime * (Vector3.right * -rightMost * relativeLateralSpeed + Vector3.up * -forwardMost * (forwardMost > 0 ? relativeDownMountainSpeed : relativeUpMountainSpeed)));
 	}
 }

@@ -22,12 +22,12 @@ public abstract class Pool<T> : Singleton<Pool<T>> where T : PoolObject {
 	}
 
 	void OnDisable() {
-		Game.Instance.Restart -= ReturnAfterWait;
+		MountainGame.Instance.Restart -= ReturnAfterWait;
 	}
 
 	IEnumerator _SubscribeAfterWait() {
 		yield return new WaitForEndOfFrame();
-		Game.Instance.Restart += ReturnAfterWait;
+		MountainGame.Instance.Restart += ReturnAfterWait;
 	}
 	
 	public void ReturnAfterWait() {

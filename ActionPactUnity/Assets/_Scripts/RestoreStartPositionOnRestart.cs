@@ -6,6 +6,20 @@ public class RestoreStartPositionOnRestart : MonoBehaviour {
 
 	void Start () {
 		startPos = transform.position;
-		Game.Instance.Restart += () => transform.position = startPos;
+
+	}
+
+	void OnEnable() {
+		StartCoroutine(Util.AfterOneFrame(() => {
+			MountainGame.Instance.Restart += OnRestart;
+		}));
+	}
+
+	void OnRestart() {
+		transform.position = startPos;
+	}
+
+	void OnDisable(){
+		MountainGame.Instance.Restart -= OnRestart;
 	}
 }

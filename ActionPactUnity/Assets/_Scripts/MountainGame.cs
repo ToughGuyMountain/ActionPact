@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 
-public class MountainCam : Singleton<MountainCam> {
+public class MountainGame : Singleton<MountainGame> {
 	public float speed;
 	public float distanceTravelled;
 	public float mountainHeight; 
@@ -10,21 +10,27 @@ public class MountainCam : Singleton<MountainCam> {
 		get { return distanceTravelled / mountainHeight; }
 	}	
 	
+	public Action Restart;
 	public Action ReachedEnd;
 
+	public StateMachineState play;
+	public StateMachineState end;
+
 	void Start() {
-		Restart();
-		Game.Instance.Restart += Restart;
+		OnRestart();
+		Restart += OnRestart;
 	}
 
-	void Restart() {
+	void OnRestart() {
+		play.SwitchTo ();
 		distanceTravelled = 0;
 	}
 
 	void Update() {
 		distanceTravelled += speed * Time.deltaTime;
-		if (AmountComplete >= 1) {
-			ReachedEnd.Call();
+		if (AmountComplete >= 1 && play.Active) {
+			end.SwitchTo();
+			ReachedEnd.Call (); // redundant, i know (could have used event for comign into end state)
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 // relative to the game's current speed
@@ -7,6 +7,6 @@ public class RelativePan : MonoBehaviour {
 	public Vector3 direction;
 	
 	void Update() {
-		transform.position += ratio * MountainCam.Instance.speed * direction.normalized * Time.deltaTime;
+		transform.position += ratio * MountainGame.Instance.speed * direction.normalized * Time.deltaTime;
 	}
 }
