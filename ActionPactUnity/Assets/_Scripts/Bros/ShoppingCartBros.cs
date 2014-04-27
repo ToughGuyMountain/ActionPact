@@ -117,7 +117,7 @@ public class ShoppingCartBros : MonoBehaviour {
 		dead.SwitchTo();
 		animator.Play("Idle");
 		rockyRoad.enabled = true;
-		cart.enabled = true;
+		//cart.enabled = true;
 		transform.position = startPosition + new Vector3(1, .5f, 0) * 2.5f;
 		yield return new WaitForSeconds (time);
 
