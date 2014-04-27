@@ -13,7 +13,14 @@ public class Bro : MonoBehaviour {
 	public StateMachineState leaningRight;
 	public StateMachineState leaningBack;
 	public StateMachineState leaningForward;
-	
+	public StateMachineState recovering;
+
+	void OnEnable(){ 
+		StartCoroutine(Util.AfterOneFrame(()=> {
+			recovering.Enter += () => StartCoroutine(RecoverForSeconds(1.0f));
+		}));
+	}
+
 	void Update() { 
 		HandleInput();
 	}
@@ -40,5 +47,16 @@ public class Bro : MonoBehaviour {
 		else {
 			idleVertical.SwitchTo();
 		}
+	}
+
+	IEnumerator RecoverForSeconds(float secs) {
+		for (float i = 0.0f; i < secs; i+=0.2f) {
+			yield return new WaitForSeconds(0.1f);
+			transform.parent.GetComponent<SpriteRenderer>().renderer.enabled = false;
+			yield return new WaitForSeconds(0.1f);
+			transform.parent.GetComponent<SpriteRenderer>().renderer.enabled = true;
+		}
+		this.transform.parent.GetComponent<SpriteRenderer>().renderer.enabled = true;
+		recovering.SwitchFrom();
 	}
 }
