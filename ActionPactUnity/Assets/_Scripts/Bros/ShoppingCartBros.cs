@@ -29,6 +29,7 @@ public class ShoppingCartBros : MonoBehaviour {
 		startPosition = transform.position;
 		Restart();
 		Game.Instance.Restart += Restart;
+		StartCoroutine(RespawnAfterTime(0.0f));
 	}
 
 	void LateUpdate() {
