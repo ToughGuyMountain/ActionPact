@@ -13,9 +13,21 @@ public class MountainGame : Singleton<MountainGame> {
 	public StateMachineState play;
 	public StateMachineState end;
 
+	public Camera camera;
+
 	void Start() {
 		end.Exit += OnRestart;
-		StartCoroutine (Util.AfterOneFrame (() => play.SwitchTo ()));
+
+		SceneManager.Instance.gameScene.Enter += () => {
+			camera.enabled = true;
+			play.SwitchTo();
+		};
+
+		SceneManager.Instance.gameScene.Exit += () => {
+			camera.enabled = false;
+			end.SwitchTo();
+		};
+
 	}
 
 	void OnRestart() {
